@@ -1,1094 +1,937 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TEE Private Chat · NEAR AI Cloud</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700&family=VT323&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg0:#05040a;
-      --bg1:#070717;
-      --bg2:#0c0b1f;
-      --panel: rgba(10, 10, 24, 0.58);
-      --panel2: rgba(10, 10, 24, 0.36);
-      --stroke: rgba(255,255,255,0.10);
-      --stroke2: rgba(255,255,255,0.16);
+      --bg0:#06060a;
+      --bg1:#0b0b12;
+      --panel: rgba(14, 14, 22, .62);
+      --panel2: rgba(14, 14, 22, .78);
+      --stroke: rgba(255,255,255,.12);
+      --stroke2: rgba(120,255,255,.22);
+      --text: rgba(240,245,255,.92);
+      --muted: rgba(240,245,255,.62);
+      --faint: rgba(240,245,255,.38);
+      --good: #51ffb0;
+      --warn: #ffdb6e;
+      --bad:  #ff4d7d;
+      --cyan: #52f8ff;
+      --pink: #ff4df3;
+      --violet: #a46bff;
+      --blue: #1e6bff;
 
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.66);
-      --faint: rgba(255,255,255,0.50);
+      --r-lg: 22px;
+      --r-md: 16px;
+      --r-sm: 12px;
+      --r-xs: 10px;
 
-      --neonA:#7c3aed; /* violet */
-      --neonB:#22d3ee; /* cyan */
-      --neonC:#f97316; /* orange */
-      --good:#34d399;
-      --warn:#fbbf24;
-      --bad:#fb7185;
+      --s-1: 6px;
+      --s-2: 10px;
+      --s-3: 14px;
+      --s-4: 18px;
+      --s-5: 24px;
+      --s-6: 32px;
 
-      --radius-xl: 26px;
-      --radius-lg: 18px;
-      --radius-md: 14px;
-      --radius-sm: 12px;
-      --radius-xs: 10px;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --shadow2: 0 12px 30px rgba(0,0,0,.45);
+      --glow: 0 0 0 1px rgba(82,248,255,.25), 0 0 28px rgba(82,248,255,.14), 0 0 70px rgba(255,77,243,.08);
+      --glow2: 0 0 0 1px rgba(255,255,255,.10), 0 0 18px rgba(82,248,255,.10);
 
-      --s0: 6px;
-      --s1: 10px;
-      --s2: 14px;
-      --s3: 18px;
-      --s4: 24px;
-      --s5: 32px;
-      --s6: 40px;
+      --font-display: "Unbounded", system-ui, -apple-system, Segoe UI, sans-serif;
+      --font-mono: "VT323", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-      --shadow: 0 18px 70px rgba(0,0,0,0.55);
-      --shadow2: 0 10px 30px rgba(0,0,0,0.35);
-
-      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: "Syne", system-ui, -apple-system, Segoe UI, sans-serif;
-
-      --focus: 0 0 0 3px rgba(34,211,238,0.18), 0 0 0 1px rgba(34,211,238,0.45) inset;
+      --ring: 0 0 0 3px rgba(82,248,255,.18), 0 0 0 1px rgba(82,248,255,.35) inset;
     }
 
-    *{ box-sizing: border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: var(--sans);
-      color: var(--text);
-      background: radial-gradient(1200px 900px at 15% 10%, rgba(124,58,237,0.26), transparent 55%),
-                  radial-gradient(900px 700px at 90% 20%, rgba(34,211,238,0.18), transparent 55%),
-                  radial-gradient(800px 700px at 55% 95%, rgba(249,115,22,0.10), transparent 55%),
-                  linear-gradient(180deg, var(--bg0), var(--bg1) 55%, var(--bg2));
-      overflow: hidden;
+      color:var(--text);
+      font-family: var(--font-display);
+      background: radial-gradient(1200px 900px at 15% 15%, rgba(82,248,255,.12), transparent 55%),
+                  radial-gradient(900px 700px at 88% 24%, rgba(255,77,243,.12), transparent 52%),
+                  radial-gradient(900px 900px at 70% 90%, rgba(164,107,255,.10), transparent 58%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow:hidden;
     }
 
-    /* Animated background: neon noir mesh + drifting grid + particles */
+    /* Animated background: neon noir gradient mesh + drifting grid */
     .bg{
-      position: fixed;
-      inset: 0;
+      position:fixed; inset:0;
       pointer-events:none;
-      z-index: 0;
+      overflow:hidden;
     }
     .mesh{
-      position:absolute;
-      inset:-20%;
+      position:absolute; inset:-15%;
+      filter: blur(22px) saturate(1.2);
+      opacity:.9;
       background:
-        radial-gradient(600px 480px at 20% 25%, rgba(124,58,237,0.26), transparent 60%),
-        radial-gradient(520px 420px at 78% 18%, rgba(34,211,238,0.18), transparent 62%),
-        radial-gradient(620px 520px at 70% 82%, rgba(249,115,22,0.12), transparent 60%),
-        radial-gradient(520px 420px at 18% 85%, rgba(34,211,238,0.10), transparent 62%),
-        radial-gradient(680px 520px at 48% 55%, rgba(124,58,237,0.12), transparent 68%);
-      filter: blur(10px) saturate(1.2);
-      animation: meshFloat 16s ease-in-out infinite;
-      opacity: 0.95;
+        radial-gradient(500px 420px at 20% 30%, rgba(82,248,255,.18), transparent 65%),
+        radial-gradient(480px 430px at 65% 20%, rgba(255,77,243,.16), transparent 62%),
+        radial-gradient(520px 470px at 72% 72%, rgba(164,107,255,.14), transparent 66%),
+        radial-gradient(520px 420px at 28% 78%, rgba(30,107,255,.12), transparent 65%);
+      animation: meshFloat 12s ease-in-out infinite alternate;
+      transform: translate3d(0,0,0);
     }
     @keyframes meshFloat{
-      0%{ transform: translate3d(-2%, -1%, 0) scale(1.03); }
-      50%{ transform: translate3d(2%, 2%, 0) scale(1.06); }
-      100%{ transform: translate3d(-2%, -1%, 0) scale(1.03); }
+      0%{ transform: translate3d(-1.5%, -1%, 0) scale(1.02) rotate(-.6deg); }
+      50%{ transform: translate3d(1.5%, 1%, 0) scale(1.03) rotate(.8deg); }
+      100%{ transform: translate3d(-1%, 1.5%, 0) scale(1.02) rotate(-.2deg); }
     }
 
     .grid{
-      position:absolute;
-      inset:0;
-      background:
-        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-      background-size: 44px 44px;
-      transform: perspective(900px) rotateX(56deg) translateY(160px) scale(1.15);
-      transform-origin: 50% 0%;
-      opacity: 0.12;
-      filter: blur(0.2px);
-      animation: gridDrift 9s linear infinite;
-      mask-image: radial-gradient(80% 70% at 50% 35%, rgba(0,0,0,0.95), rgba(0,0,0,0.0));
-      -webkit-mask-image: radial-gradient(80% 70% at 50% 35%, rgba(0,0,0,0.95), rgba(0,0,0,0.0));
+      position:absolute; inset:0;
+      opacity:.22;
+      background-image:
+        linear-gradient(rgba(82,248,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(82,248,255,.10) 1px, transparent 1px);
+      background-size: 44px 44px, 44px 44px;
+      transform: perspective(900px) rotateX(58deg) translateY(120px);
+      transform-origin: bottom;
+      filter: drop-shadow(0 0 18px rgba(82,248,255,.18));
+      animation: gridDrift 10s linear infinite;
+      mask-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,.55) 55%, rgba(0,0,0,0));
     }
     @keyframes gridDrift{
-      from{ background-position: 0 0, 0 0; }
-      to{ background-position: 0 44px, 44px 0; }
+      0%{ background-position: 0px 0px, 0px 0px; }
+      100%{ background-position: 0px 180px, 0px 180px; }
     }
 
-    canvas#particles{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      opacity: 0.55;
-      mix-blend-mode: screen;
-      filter: blur(0.1px);
+    .vignette{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(1200px 900px at 50% 40%, transparent 35%, rgba(0,0,0,.62) 100%);
+      opacity:.65;
+      mix-blend-mode:multiply;
     }
 
     .app{
-      position: relative;
-      z-index: 1;
-      height: 100%;
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: var(--s4);
-      padding: var(--s5);
-      max-width: 1440px;
-      margin: 0 auto;
+      position:relative;
+      height:100%;
+      display:flex;
+      gap:var(--s-4);
+      padding: clamp(14px, 2.3vw, 24px);
     }
 
-    .panel{
-      background: linear-gradient(180deg, rgba(12, 12, 28, 0.62), rgba(8, 8, 20, 0.46));
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
       border: 1px solid var(--stroke);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .panel::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        radial-gradient(700px 300px at 15% 8%, rgba(124,58,237,0.25), transparent 60%),
-        radial-gradient(700px 350px at 85% 0%, rgba(34,211,238,0.18), transparent 62%),
-        radial-gradient(700px 420px at 60% 105%, rgba(249,115,22,0.10), transparent 62%);
-      opacity: 0.75;
-      pointer-events:none;
-      filter: blur(14px);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow), var(--glow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
     .sidebar{
+      width: 360px;
+      min-width: 280px;
+      max-width: 380px;
+      padding: var(--s-5);
       display:flex;
       flex-direction:column;
-      min-width: 0;
+      gap: var(--s-5);
+      position:relative;
+      overflow:hidden;
     }
-
-    .sidebarHeader{
-      position: relative;
-      padding: var(--s5) var(--s5) var(--s3);
-      display:flex;
-      flex-direction:column;
-      gap: var(--s2);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+    .sidebar:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(420px 220px at 20% 10%, rgba(82,248,255,.16), transparent 60%),
+        radial-gradient(380px 260px at 80% 25%, rgba(255,77,243,.12), transparent 62%),
+        radial-gradient(380px 280px at 55% 95%, rgba(164,107,255,.10), transparent 65%);
+      opacity:.9;
+      pointer-events:none;
+      filter: blur(12px);
     }
-
-    .brandRow{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: var(--s2);
-    }
+    .sidebar > *{ position:relative; z-index:1; }
 
     .brand{
       display:flex;
-      align-items:center;
-      gap: var(--s2);
-      min-width: 0;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: var(--s-4);
+    }
+    .brand .title{
+      display:flex; flex-direction:column; gap: var(--s-2);
+      line-height:1.05;
     }
     .logo{
-      width: 42px;
-      height: 42px;
+      width:44px; height:44px;
       border-radius: 14px;
-      background:
-        radial-gradient(circle at 35% 35%, rgba(34,211,238,0.85), rgba(34,211,238,0) 58%),
-        radial-gradient(circle at 70% 70%, rgba(124,58,237,0.9), rgba(124,58,237,0) 60%),
-        linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0));
-      border: 1px solid rgba(255,255,255,0.16);
-      box-shadow: 0 10px 30px rgba(124,58,237,0.18), 0 10px 28px rgba(34,211,238,0.12);
-      position: relative;
+      background: linear-gradient(135deg, rgba(82,248,255,.25), rgba(255,77,243,.18));
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 0 0 1px rgba(82,248,255,.18) inset, 0 12px 30px rgba(0,0,0,.35);
+      display:grid; place-items:center;
+      flex: 0 0 auto;
+      position:relative;
       overflow:hidden;
     }
-    .logo::after{
+    .logo:after{
       content:"";
-      position:absolute;
-      inset:-40%;
-      background: linear-gradient(115deg, transparent, rgba(255,255,255,0.28), transparent);
-      transform: rotate(20deg);
-      animation: sheen 6.5s ease-in-out infinite;
-      opacity: 0.65;
+      position:absolute; inset:-40%;
+      background: conic-gradient(from 120deg, rgba(82,248,255,.0), rgba(82,248,255,.55), rgba(255,77,243,.45), rgba(164,107,255,.35), rgba(82,248,255,.0));
+      animation: spin 5.2s linear infinite;
+      opacity:.55;
     }
-    @keyframes sheen{
-      0%{ transform: translateX(-40%) rotate(20deg); }
-      50%{ transform: translateX(40%) rotate(20deg); }
-      100%{ transform: translateX(-40%) rotate(20deg); }
-    }
+    @keyframes spin{ to{ transform: rotate(360deg);} }
+    .logo svg{ width:22px; height:22px; z-index:1; filter: drop-shadow(0 6px 14px rgba(0,0,0,.55)); }
 
-    .brandText{
-      display:flex;
-      flex-direction:column;
-      min-width:0;
-    }
-    .brandText .title{
-      font-weight: 800;
-      letter-spacing: 0.2px;
+    .h1{
+      font-weight: 700;
+      letter-spacing: .2px;
       font-size: 18px;
-      line-height: 1.15;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
     }
-    .brandText .sub{
-      font-family: var(--mono);
-      font-size: 12px;
+    .sub{
       color: var(--muted);
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
+      font-size: 12.5px;
+      letter-spacing:.2px;
     }
 
+    .pillRow{ display:flex; gap: var(--s-2); flex-wrap: wrap; }
     .pill{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-      cursor: default;
-      user-select:none;
-      max-width: 180px;
-    }
-    .pill:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,0.32);
-      background: rgba(34,211,238,0.08);
-    }
-    .dot{
-      width: 10px;
-      height: 10px;
-      border-radius: 99px;
-      background: var(--good);
-      box-shadow: 0 0 0 0 rgba(52,211,153,0.0);
-      position: relative;
-    }
-    .dot::after{
-      content:"";
-      position:absolute;
-      inset:-10px;
-      border-radius: 999px;
-      background: radial-gradient(circle, rgba(52,211,153,0.30), rgba(52,211,153,0.0) 70%);
-      animation: pulse 2.1s ease-in-out infinite;
-    }
-    @keyframes pulse{
-      0%{ transform: scale(0.65); opacity: 0.55; }
-      50%{ transform: scale(1.0); opacity: 0.25; }
-      100%{ transform: scale(0.65); opacity: 0.55; }
-    }
-    .pill span{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--text);
-      letter-spacing: 0.2px;
-    }
-
-    .sidebarBody{
-      position: relative;
-      padding: var(--s4) var(--s5) var(--s5);
-      overflow:auto;
-      display:flex;
-      flex-direction:column;
-      gap: var(--s4);
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.18) transparent;
-    }
-    .sidebarBody::-webkit-scrollbar{ width: 10px; }
-    .sidebarBody::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,0.14);
-      border-radius: 999px;
-      border: 2px solid rgba(0,0,0,0);
-      background-clip: padding-box;
-    }
-
-    .sectionTitle{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: var(--s2);
-      margin-top: 2px;
-    }
-    .sectionTitle h3{
-      margin:0;
-      font-size: 14px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.78);
-      font-weight: 800;
-    }
-    .dividerGlow{
-      height: 1px;
-      width: 100%;
-      background: linear-gradient(90deg, rgba(124,58,237,0.0), rgba(124,58,237,0.40), rgba(34,211,238,0.35), rgba(249,115,22,0.0));
-      opacity: 0.8;
-    }
-
-    .teeCard{
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      overflow:hidden;
-      box-shadow: var(--shadow2);
-      position: relative;
-      transform: translateZ(0);
-    }
-    .teeCardHeader{
-      padding: var(--s3) var(--s3);
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: var(--s2);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
-    }
-    .teeCardHeader .left{
-      display:flex; flex-direction:column; gap:4px;
-      min-width:0;
-    }
-    .teeCardHeader .left .name{
-      font-weight: 800;
-      letter-spacing: 0.2px;
-      font-size: 14px;
-    }
-    .teeCardHeader .left .desc{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
-    .teeCardHeader .chip{
-      display:flex; align-items:center; gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 16px;
       padding: 8px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(34,211,238,0.22);
-      background: rgba(34,211,238,0.08);
-      font-family: var(--mono);
-      font-size: 12px;
-      color: rgba(255,255,255,0.86);
-      white-space:nowrap;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(8,8,14,.55);
+      color: rgba(240,245,255,.86);
+      box-shadow: var(--glow2);
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      user-select:none;
     }
-    .chipIcon{
-      width: 10px; height:10px; border-radius:999px;
-      background: rgba(34,211,238,0.95);
-      box-shadow: 0 0 18px rgba(34,211,238,0.35);
-      position: relative;
+    .pill .dot{
+      width: 9px; height: 9px; border-radius: 50%;
+      background: rgba(82,248,255,.7);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 0 18px rgba(82,248,255,.35);
+      animation: pulse 1.35s ease-in-out infinite;
     }
-    .chipIcon::after{
+    .pill:nth-child(2) .dot{ background: rgba(255,77,243,.7); box-shadow: 0 0 18px rgba(255,77,243,.35); animation-delay:.18s;}
+    .pill:nth-child(3) .dot{ background: rgba(164,107,255,.7); box-shadow: 0 0 18px rgba(164,107,255,.35); animation-delay:.32s;}
+    @keyframes pulse{
+      0%, 100%{ transform: scale(.92); opacity: .72; }
+      50%{ transform: scale(1.18); opacity: 1; }
+    }
+
+    .teePanel{
+      padding: var(--s-4);
+      border-radius: var(--r-md);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(8,8,14,.42);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
+      overflow:hidden;
+      position:relative;
+    }
+    .teePanel:before{
       content:"";
-      position:absolute;
-      inset:-8px;
-      border-radius:999px;
-      background: radial-gradient(circle, rgba(34,211,238,0.22), rgba(34,211,238,0.0) 70%);
-      animation: pulseCyan 1.6s ease-in-out infinite;
+      position:absolute; inset:-1px;
+      background: linear-gradient(120deg, rgba(82,248,255,.08), rgba(255,77,243,.06), rgba(164,107,255,.06));
+      opacity:.6;
+      pointer-events:none;
     }
-    @keyframes pulseCyan{
-      0%{ transform: scale(0.7); opacity:0.55; }
-      55%{ transform: scale(1.02); opacity:0.22; }
-      100%{ transform: scale(0.7); opacity:0.55; }
+    .teePanel > *{ position:relative; z-index:1; }
+
+    .teeHeader{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom: var(--s-3);
+    }
+    .teeHeader h2{
+      margin:0;
+      font-size: 13px;
+      letter-spacing:.9px;
+      text-transform: uppercase;
+      color: rgba(240,245,255,.84);
+    }
+    .liveBadge{
+      display:flex; align-items:center; gap:8px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: rgba(240,245,255,.78);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.24);
+    }
+    .liveBadge .wave{
+      width:10px; height:10px; border-radius: 50%;
+      background: var(--good);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 0 18px rgba(81,255,176,.30);
+      position:relative;
+    }
+    .liveBadge .wave:after{
+      content:"";
+      position:absolute; inset:-10px;
+      border-radius:999px;
+      border: 1px solid rgba(81,255,176,.40);
+      opacity: .55;
+      animation: ping 1.55s ease-out infinite;
+    }
+    @keyframes ping{
+      0%{ transform: scale(.35); opacity:.0;}
+      25%{ opacity:.55;}
+      100%{ transform: scale(1.3); opacity:0;}
     }
 
     .teeList{
-      padding: var(--s3);
       display:flex;
       flex-direction:column;
-      gap: 10px;
+      gap: var(--s-2);
     }
     .teeItem{
       display:flex;
       align-items:center;
-      justify-content: space-between;
-      gap: var(--s2);
+      justify-content:space-between;
+      gap: var(--s-3);
       padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(0,0,0,0.18);
-      border: 1px solid rgba(255,255,255,0.10);
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
-      position: relative;
-      overflow:hidden;
+      border-radius: var(--r-sm);
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
     }
     .teeItem:hover{
       transform: translateY(-1px);
-      border-color: rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
+      border-color: rgba(82,248,255,.22);
+      background: rgba(0,0,0,.24);
     }
-    .teeItem .k{
+    .teeLeft{
       display:flex;
-      align-items:center;
-      gap: 10px;
-      min-width:0;
+      flex-direction:column;
+      gap: 3px;
+      min-width: 0;
     }
-    .sig{
+    .teeName{
+      font-size: 13px;
+      color: rgba(240,245,255,.86);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .teeDesc{
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: rgba(240,245,255,.60);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .teeRight{
+      display:flex; align-items:center; gap: 10px; flex:0 0 auto;
+      font-family: var(--font-mono);
+      font-size: 16px;
+    }
+    .statusIcon{
       width: 26px; height: 26px;
       border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
       display:grid; place-items:center;
-      color: rgba(255,255,255,0.82);
-      font-family: var(--mono);
-      font-weight: 700;
-      font-size: 12px;
-      position: relative;
-    }
-    .teeItem .label{
-      display:flex; flex-direction:column;
-      min-width:0;
-    }
-    .teeItem .label .a{
-      font-weight: 700;
-      font-size: 13px;
-      color: rgba(255,255,255,0.86);
-      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      position:relative;
       overflow:hidden;
-      text-overflow: ellipsis;
     }
-    .teeItem .label .b{
-      font-family: var(--mono);
-      font-size: 11px;
-      color: rgba(255,255,255,0.56);
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
+    .statusIcon:before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.16), transparent 55%);
+      transform: rotate(20deg);
     }
-    .teeItem .state{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: rgba(255,255,255,0.76);
-      white-space:nowrap;
-    }
-    .state .tick{
-      width: 20px;
-      height: 20px;
-      border-radius: 10px;
-      display:grid;
-      place-items:center;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-    }
-    .tick.good{
-      border-color: rgba(52,211,153,0.35);
-      background: rgba(52,211,153,0.10);
-      color: rgba(52,211,153,0.95);
-      box-shadow: 0 0 0 0 rgba(52,211,153,0.0);
-      animation: tickPulse 2.8s ease-in-out infinite;
-    }
-    @keyframes tickPulse{
-      0%, 100%{ box-shadow: 0 0 0 0 rgba(52,211,153,0.0); }
-      50%{ box-shadow: 0 0 0 8px rgba(52,211,153,0.06); }
-    }
-    .tick.bad{
-      border-color: rgba(251,113,133,0.40);
-      background: rgba(251,113,133,0.08);
-      color: rgba(251,113,133,0.95);
-      animation: badFlicker 3.2s ease-in-out infinite;
-    }
-    @keyframes badFlicker{
-      0%, 100%{ opacity: 0.92; }
-      50%{ opacity: 0.72; }
+    .ok .statusIcon{ border-color: rgba(81,255,176,.28); box-shadow: 0 0 22px rgba(81,255,176,.10); }
+    .bad .statusIcon{ border-color: rgba(255,77,125,.30); box-shadow: 0 0 22px rgba(255,77,125,.10); }
+    .ok .statusText{ color: rgba(81,255,176,.95); }
+    .bad .statusText{ color: rgba(255,77,125,.92); }
+    .statusText{
+      letter-spacing: .2px;
     }
 
-    .howCard{
-      padding: var(--s4);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      box-shadow: var(--shadow2);
-      position: relative;
+    .how{
+      padding: var(--s-4);
+      border-radius: var(--r-md);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(8,8,14,.42);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
     }
-    .howCard p{
-      margin: 10px 0 0;
-      color: rgba(255,255,255,0.72);
+    .how h3{
+      margin:0 0 var(--s-3) 0;
       font-size: 13px;
-      line-height: 1.55;
+      letter-spacing:.9px;
+      text-transform: uppercase;
+      color: rgba(240,245,255,.84);
     }
     .steps{
-      margin-top: var(--s3);
-      display:grid;
-      gap: 10px;
+      display:flex;
+      flex-direction:column;
+      gap: var(--s-3);
+      margin:0;
+      padding:0;
+      list-style:none;
     }
     .step{
       display:flex;
-      gap: 12px;
+      gap: var(--s-3);
       align-items:flex-start;
-      padding: 12px 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.18);
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
     }
-    .step:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,0.20);
-      background: rgba(34,211,238,0.05);
-    }
-    .step .n{
+    .stepNum{
       width: 28px; height: 28px;
       border-radius: 12px;
-      display:grid;
-      place-items:center;
-      font-family: var(--mono);
-      font-weight: 700;
-      font-size: 12px;
-      color: rgba(255,255,255,0.86);
-      border: 1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      display:grid; place-items:center;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: rgba(240,245,255,.85);
+      border: 1px solid rgba(82,248,255,.22);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 0 18px rgba(82,248,255,.10);
       flex: 0 0 auto;
     }
-    .step .t{
-      display:flex;
-      flex-direction:column;
-      gap: 2px;
-      min-width:0;
+    .stepText{
+      font-size: 12.8px;
+      color: rgba(240,245,255,.72);
+      line-height: 1.35;
     }
-    .step .t b{
-      font-size: 13px;
-      font-weight: 800;
-      color: rgba(255,255,255,0.86);
-    }
-    .step .t span{
-      font-size: 12px;
-      color: rgba(255,255,255,0.66);
-      line-height: 1.45;
-    }
-
-    .codeCard{
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.30);
+    .code{
+      margin-top: var(--s-4);
+      border-radius: var(--r-md);
+      border: 1px solid rgba(255,255,255,.12);
       overflow:hidden;
-      box-shadow: var(--shadow2);
+      background: rgba(0,0,0,.26);
     }
-    .codeTop{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.05);
+    .codeHeader{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
     }
-    .codeTop .label{
-      font-family: var(--mono);
+    .codeHeader .label{
       font-size: 12px;
-      color: rgba(255,255,255,0.72);
+      letter-spacing:.9px;
+      text-transform: uppercase;
+      color: rgba(240,245,255,.72);
     }
     .btn{
-      appearance:none;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.86);
-      font-family: var(--mono);
-      font-size: 12px;
-      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      color: rgba(240,245,255,.88);
       border-radius: 12px;
+      padding: 9px 12px;
+      font-family: var(--font-display);
+      font-size: 12.8px;
       cursor:pointer;
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
-      display:flex;
-      align-items:center;
-      gap:8px;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
       user-select:none;
     }
-    .btn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,0.30);
-      background: rgba(34,211,238,0.08);
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(82,248,255,.28); box-shadow: 0 0 0 1px rgba(82,248,255,.14) inset, 0 14px 26px rgba(0,0,0,.35); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn:focus{ outline:none; box-shadow: var(--ring), 0 14px 26px rgba(0,0,0,.35); }
+    .btn.secondary{
+      background: rgba(0,0,0,.18);
     }
-    .btn:active{ transform: translateY(0px) scale(0.99); }
-    .btn:focus-visible{ outline: none; box-shadow: var(--focus); }
 
     pre{
       margin:0;
-      padding: 14px;
+      padding: 14px 14px;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      line-height: 1.2;
+      color: rgba(240,245,255,.86);
       overflow:auto;
-      font-family: var(--mono);
-      font-size: 12px;
-      line-height: 1.55;
-      color: rgba(255,255,255,0.86);
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.18) transparent;
+      white-space:pre;
     }
-    pre::-webkit-scrollbar{ height: 10px; width: 10px; }
-    pre::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,0.14);
-      border-radius: 999px;
-      border: 2px solid rgba(0,0,0,0);
-      background-clip: padding-box;
-    }
+    .kw{ color: var(--cyan); }
+    .cm{ color: rgba(240,245,255,.54); }
+    .st{ color: rgba(81,255,176,.92); }
+    .fn{ color: rgba(255,219,110,.92); }
+    .id{ color: rgba(164,107,255,.92); }
 
     .main{
+      flex:1;
+      min-width:0;
       display:flex;
       flex-direction:column;
-      min-width:0;
-    }
-
-    .mainHeader{
-      padding: var(--s5) var(--s5) var(--s3);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display:flex;
-      align-items:flex-end;
-      justify-content: space-between;
-      gap: var(--s3);
-      position: relative;
-    }
-    .headline{
-      display:flex;
-      flex-direction:column;
-      gap: 8px;
-      min-width:0;
-    }
-    .headline h1{
-      margin:0;
-      font-size: 26px;
-      letter-spacing: 0.2px;
-      line-height: 1.1;
-      font-weight: 800;
-      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(34,211,238,0.92), rgba(124,58,237,0.90));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      white-space: nowrap;
       overflow:hidden;
-      text-overflow: ellipsis;
     }
-    .headline .tagline{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: rgba(255,255,255,0.66);
-      max-width: 65ch;
-    }
-
-    .headerActions{
+    .topbar{
       display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
       align-items:center;
-      justify-content:flex-end;
+      justify-content:space-between;
+      gap: var(--s-4);
+      padding: var(--s-5);
+      margin-bottom: var(--s-4);
     }
-    .btnPrimary{
-      border-color: rgba(124,58,237,0.35);
-      background: rgba(124,58,237,0.12);
+    .topbar .meta{
+      display:flex;
+      flex-direction:column;
+      gap: var(--s-2);
+      min-width:0;
     }
-    .btnPrimary:hover{
-      border-color: rgba(124,58,237,0.50);
-      background: rgba(124,58,237,0.18);
+    .topbar .meta .big{
+      margin:0;
+      font-size: 20px;
+      letter-spacing:.2px;
     }
-    .btnDanger{
-      border-color: rgba(251,113,133,0.35);
-      background: rgba(251,113,133,0.10);
+    .topbar .meta .small{
+      margin:0;
+      font-size: 12.8px;
+      color: var(--muted);
+      line-height: 1.35;
     }
-    .btnDanger:hover{
-      border-color: rgba(251,113,133,0.55);
-      background: rgba(251,113,133,0.16);
-    }
+    .topbar .actions{ display:flex; gap: var(--s-2); flex-wrap:wrap; justify-content:flex-end; }
 
-    .content{
-      position: relative;
+    .chatShell{
       flex:1;
       min-height:0;
+      padding: 0 var(--s-5) var(--s-4);
       display:flex;
       flex-direction:column;
-      padding: var(--s4) var(--s5) var(--s4);
-      gap: var(--s3);
+      gap: var(--s-3);
+    }
+    .chat{
+      flex:1;
+      min-height:0;
+      border-radius: var(--r-lg);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(8,8,14,.40);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset, var(--shadow2);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .chatHeader{
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .chatHeader .left{
+      display:flex; align-items:center; gap: 10px;
+      min-width:0;
+    }
+    .chip{
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: rgba(240,245,255,.78);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .chip .miniDot{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(82,248,255,.8);
+      box-shadow: 0 0 18px rgba(82,248,255,.35);
+      animation: pulse 1.35s ease-in-out infinite;
+    }
+    .chatHeader .right{
+      display:flex; align-items:center; gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: rgba(240,245,255,.60);
+    }
+
+    .scroll{
+      flex:1;
+      min-height:0;
+      overflow:auto;
+      padding: var(--s-4);
+      scroll-behavior:smooth;
     }
 
     .welcome{
-      border-radius: var(--radius-xl);
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      box-shadow: var(--shadow2);
-      padding: var(--s5);
-      position: relative;
+      border: 1px solid rgba(82,248,255,.18);
+      background: linear-gradient(180deg, rgba(82,248,255,.08), rgba(255,77,243,.05));
+      border-radius: var(--r-lg);
+      padding: var(--s-5);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset, 0 18px 60px rgba(0,0,0,.35);
+      position:relative;
       overflow:hidden;
       animation: popIn .35s ease both;
     }
-    @keyframes popIn{
-      from{ opacity:0; transform: translateY(8px) scale(0.99); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
+    .welcome:before{
+      content:"";
+      position:absolute; inset:-30%;
+      background: conic-gradient(from 140deg, rgba(82,248,255,.0), rgba(82,248,255,.18), rgba(255,77,243,.14), rgba(164,107,255,.10), rgba(82,248,255,.0));
+      animation: spin 7.2s linear infinite;
+      opacity:.55;
+      filter: blur(10px);
     }
+    .welcome > *{ position:relative; z-index:1; }
+    .welcome h4{
+      margin: 0 0 var(--s-2);
+      font-size: 20px;
+      letter-spacing:.2px;
+    }
+    .welcome p{
+      margin: 0;
+      color: rgba(240,245,255,.72);
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 70ch;
+    }
+    .welcome .bullets{
+      margin-top: var(--s-4);
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-3);
+    }
+    .b{
+      padding: 12px 12px;
+      border-radius: var(--r-md);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: rgba(240,245,255,.78);
+      font-size: 12.6px;
+      line-height:1.35;
+      transition: transform .16s ease, border-color .16s ease;
+    }
+    .b strong{ color: rgba(240,245,255,.92); font-weight: 600;}
+    .b:hover{ transform: translateY(-1px); border-color: rgba(82,248,255,.22); }
 
     .welcome.hidden{ display:none !important; }
 
-    .welcome::before{
-      content:"";
-      position:absolute;
-      inset:-1px;
-      background:
-        radial-gradient(900px 420px at 10% 10%, rgba(34,211,238,0.18), transparent 60%),
-        radial-gradient(700px 420px at 85% 0%, rgba(124,58,237,0.18), transparent 62%),
-        radial-gradient(700px 520px at 60% 120%, rgba(249,115,22,0.10), transparent 62%);
-      filter: blur(16px);
-      opacity: 0.85;
-      pointer-events:none;
-    }
-    .welcomeInner{
-      position: relative;
-      display:flex;
-      align-items:flex-start;
-      justify-content: space-between;
-      gap: var(--s4);
-    }
-    .welcome h2{
-      margin:0;
-      font-size: 18px;
-      letter-spacing: 0.2px;
-      font-weight: 800;
-      color: rgba(255,255,255,0.92);
-    }
-    .welcome p{
-      margin: 10px 0 0;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.6;
-      font-size: 13px;
-      max-width: 78ch;
-    }
-    .hintRow{
-      margin-top: var(--s3);
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .hint{
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.22);
-      padding: 10px 12px;
-      border-radius: 16px;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: rgba(255,255,255,0.74);
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
-      cursor:pointer;
-      user-select:none;
-    }
-    .hint:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,0.24);
-      background: rgba(34,211,238,0.06);
-    }
-    .hint:active{ transform: translateY(0px) scale(0.99); }
-
-    .chat{
-      flex: 1;
-      min-height: 0;
-      overflow:auto;
+    .messages{
       display:flex;
       flex-direction:column;
-      gap: 12px;
-      padding: 4px 2px 8px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.18) transparent;
-    }
-    .chat::-webkit-scrollbar{ width: 10px; }
-    .chat::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,0.14);
-      border-radius: 999px;
-      border: 2px solid rgba(0,0,0,0);
-      background-clip: padding-box;
+      gap: var(--s-3);
+      padding-bottom: var(--s-2);
     }
 
-    .msgRow{
+    .msg{
       display:flex;
-      gap: 10px;
+      gap: 12px;
       align-items:flex-end;
+      max-width: 100%;
       animation: msgIn .22s ease both;
     }
     @keyframes msgIn{
-      from{ opacity:0; transform: translateY(6px); }
-      to{ opacity:1; transform: translateY(0); }
+      from{ opacity:0; transform: translateY(10px) scale(.99); filter: blur(2px); }
+      to{ opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
     }
-
-    .msgRow.user{ justify-content:flex-end; }
-    .msgRow.ai{ justify-content:flex-start; }
-
     .avatar{
-      width: 34px; height: 34px;
+      width: 36px; height: 36px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
       display:grid; place-items:center;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
       flex: 0 0 auto;
-      position: relative;
+      position:relative;
       overflow:hidden;
     }
-    .avatar.ai{
-      background:
-        radial-gradient(circle at 35% 35%, rgba(34,211,238,0.85), rgba(34,211,238,0) 58%),
-        radial-gradient(circle at 70% 70%, rgba(124,58,237,0.8), rgba(124,58,237,0) 62%),
-        rgba(255,255,255,0.04);
-      border-color: rgba(34,211,238,0.22);
-    }
-    .avatar.user{
-      background:
-        radial-gradient(circle at 35% 35%, rgba(249,115,22,0.70), rgba(249,115,22,0) 58%),
-        radial-gradient(circle at 70% 70%, rgba(124,58,237,0.65), rgba(124,58,237,0) 62%),
-        rgba(255,255,255,0.04);
-      border-color: rgba(249,115,22,0.20);
+    .avatar:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 30%, rgba(82,248,255,.18), transparent 55%),
+                  radial-gradient(circle at 75% 65%, rgba(255,77,243,.14), transparent 58%);
+      filter: blur(8px);
+      opacity:.95;
     }
     .avatar span{
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.86);
+      position:relative;
+      z-index:1;
+      font-family: var(--font-mono);
+      font-size: 20px;
+      color: rgba(240,245,255,.86);
     }
 
     .bubble{
-      max-width: min(720px, 78%);
       border-radius: 18px;
-      padding: 12px 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.32);
-      position: relative;
+      padding: 12px 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
+      max-width: min(720px, 100%);
+      position:relative;
       overflow:hidden;
       transition: transform .16s ease, border-color .16s ease, background .16s ease;
-      transform: translateZ(0);
     }
     .bubble:hover{
       transform: translateY(-1px);
-      border-color: rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.08);
+      border-color: rgba(82,248,255,.22);
+      background: rgba(0,0,0,.24);
     }
-    .bubble.user{
-      background: rgba(249,115,22,0.08);
-      border-color: rgba(249,115,22,0.20);
+
+    .msg.user{ flex-direction: row-reverse; }
+    .msg.user .bubble{
+      background: linear-gradient(180deg, rgba(82,248,255,.10), rgba(0,0,0,.18));
+      border-color: rgba(82,248,255,.18);
     }
-    .bubble.ai{
-      background: rgba(34,211,238,0.07);
-      border-color: rgba(34,211,238,0.22);
+    .msg.user .avatar:after{
+      background: radial-gradient(circle at 30% 30%, rgba(81,255,176,.18), transparent 55%),
+                  radial-gradient(circle at 75% 65%, rgba(82,248,255,.14), transparent 58%);
     }
-    .bubble .text{
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      font-size: 14px;
-      line-height: 1.6;
-      color: rgba(255,255,255,0.86);
+
+    .text{
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-size: 13.2px;
+      color: rgba(240,245,255,.88);
+      line-height:1.45;
     }
-    .meta{
-      margin-top: 10px;
+
+    .metaRow{
       display:flex;
       align-items:center;
-      justify-content: space-between;
+      justify-content:space-between;
       gap: 10px;
-      color: rgba(255,255,255,0.56);
-      font-family: var(--mono);
-      font-size: 11px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      color: rgba(240,245,255,.58);
+      font-size: 12px;
     }
     .badge{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      padding: 7px 10px;
+      display:inline-flex; align-items:center; gap: 8px;
+      padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(34,211,238,0.20);
-      background: rgba(34,211,238,0.08);
-      color: rgba(255,255,255,0.72);
-      white-space:nowrap;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: rgba(240,245,255,.70);
+      box-shadow: 0 0 18px rgba(82,248,255,.08);
     }
-    .badge .lock{
-      filter: drop-shadow(0 0 14px rgba(34,211,238,0.25));
+    .lock{
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: rgba(81,255,176,.86);
+      box-shadow: 0 0 18px rgba(81,255,176,.35);
+      animation: pulse 1.35s ease-in-out infinite;
     }
-
     .time{
-      opacity: 0.75;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: rgba(240,245,255,.52);
       white-space:nowrap;
     }
 
-    .composer{
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: var(--s3) var(--s5) var(--s5);
-      display:flex;
-      gap: 12px;
-      align-items:flex-end;
-      background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.12));
-    }
-    .inputWrap{
-      flex:1;
-      min-width: 0;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      box-shadow: 0 14px 50px rgba(0,0,0,0.32);
-      padding: 10px 10px 10px 12px;
-      display:flex;
-      gap: 10px;
-      align-items:flex-end;
-      transition: border-color .16s ease, background .16s ease, transform .16s ease;
-    }
-    .inputWrap:focus-within{
-      border-color: rgba(34,211,238,0.32);
-      background: rgba(34,211,238,0.06);
-      box-shadow: var(--focus), 0 18px 70px rgba(0,0,0,0.42);
-      transform: translateY(-1px);
-    }
-    textarea{
-      flex:1;
-      min-width: 0;
-      resize: none;
-      border: none;
-      outline: none;
-      background: transparent;
-      color: rgba(255,255,255,0.88);
-      font-family: var(--sans);
-      font-size: 14px;
-      line-height: 1.5;
-      max-height: 160px;
-      padding: 2px 0;
-    }
-    textarea::placeholder{ color: rgba(255,255,255,0.46); }
-    .kbd{
-      flex: 0 0 auto;
+    .typing{
       display:flex;
       align-items:center;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.18);
-      font-family: var(--mono);
-      font-size: 11px;
-      color: rgba(255,255,255,0.60);
-      user-select:none;
-    }
-    .kbd .key{
-      padding: 2px 8px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.72);
-      font-weight: 700;
-    }
-
-    .sendBtn{
-      flex: 0 0 auto;
-      min-width: 54px;
-      height: 54px;
-      border-radius: 18px;
-      border: 1px solid rgba(34,211,238,0.28);
-      background: rgba(34,211,238,0.10);
-      box-shadow: 0 14px 50px rgba(0,0,0,0.32);
-      cursor:pointer;
-      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
-      display:grid;
-      place-items:center;
-      color: rgba(255,255,255,0.86);
-    }
-    .sendBtn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,0.45);
-      background: rgba(34,211,238,0.16);
-      box-shadow: 0 18px 65px rgba(0,0,0,0.40), 0 0 0 6px rgba(34,211,238,0.07);
-    }
-    .sendBtn:active{ transform: translateY(0px) scale(0.99); }
-    .sendBtn:focus-visible{ outline:none; box-shadow: var(--focus), 0 18px 65px rgba(0,0,0,0.40); }
-    .sendBtn[disabled]{
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform:none;
-      box-shadow: 0 14px 50px rgba(0,0,0,0.32);
-    }
-
-    .typingRow{
-      display:flex;
       gap: 10px;
-      align-items:flex-end;
-      justify-content:flex-start;
-      padding-left: 2px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255,255,255,.16);
+      background: rgba(0,0,0,.16);
+      max-width: 360px;
       animation: msgIn .22s ease both;
     }
-    .typingBubble{
-      border-radius: 18px;
-      padding: 12px 14px;
-      border: 1px solid rgba(34,211,238,0.22);
-      background: rgba(34,211,238,0.07);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.32);
-      display:flex;
-      align-items:center;
-      gap: 10px;
-    }
-    .dots{
+    .typing .dots{
       display:flex;
       gap: 6px;
       align-items:center;
     }
-    .dotty{
-      width: 8px; height: 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.70);
-      opacity: 0.55;
-      animation: dotBounce 1.0s ease-in-out infinite;
+    .typing .dots span{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(240,245,255,.70);
+      opacity:.55;
+      animation: bounce 1s ease-in-out infinite;
     }
-    .dotty:nth-child(2){ animation-delay: 0.14s; }
-    .dotty:nth-child(3){ animation-delay: 0.28s; }
-    @keyframes dotBounce{
-      0%, 100%{ transform: translateY(0px); opacity: 0.45; }
-      50%{ transform: translateY(-4px); opacity: 0.95; }
+    .typing .dots span:nth-child(2){ animation-delay:.12s; opacity:.45;}
+    .typing .dots span:nth-child(3){ animation-delay:.24s; opacity:.35;}
+    @keyframes bounce{
+      0%, 100%{ transform: translateY(0px); }
+      50%{ transform: translateY(-6px); }
     }
-    .typingLabel{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: rgba(255,255,255,0.68);
+    .typing .label{
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: rgba(240,245,255,.64);
+    }
+
+    .composerWrap{
+      margin-top: var(--s-3);
+      border-radius: var(--r-lg);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(8,8,14,.48);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset, var(--shadow2);
+      overflow:hidden;
+    }
+    .composer{
+      display:flex;
+      gap: var(--s-2);
+      padding: var(--s-3);
+      align-items:flex-end;
+    }
+    textarea{
+      flex:1;
+      min-height: 46px;
+      max-height: 160px;
+      resize:none;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      color: rgba(240,245,255,.88);
+      border-radius: 16px;
+      padding: 12px 12px;
+      font-family: var(--font-display);
+      font-size: 13.2px;
+      line-height: 1.35;
+      outline:none;
+      transition: box-shadow .16s ease, border-color .16s ease, transform .16s ease;
+    }
+    textarea:focus{
+      border-color: rgba(82,248,255,.30);
+      box-shadow: var(--ring);
+      transform: translateY(-1px);
+    }
+    .sendBtn{
+      flex: 0 0 auto;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(82,248,255,.22);
+      background: linear-gradient(180deg, rgba(82,248,255,.16), rgba(0,0,0,.14));
+      color: rgba(240,245,255,.90);
+      font-weight: 600;
+      letter-spacing:.2px;
+      cursor:pointer;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
+      min-width: 98px;
+    }
+    .sendBtn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,77,243,.26);
+      box-shadow: 0 0 0 1px rgba(82,248,255,.14) inset, 0 18px 40px rgba(0,0,0,.45), 0 0 40px rgba(82,248,255,.10);
+    }
+    .sendBtn:active{ transform: translateY(0px) scale(.99); }
+    .sendBtn:disabled{
+      cursor:not-allowed;
+      opacity:.55;
+      transform:none;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
+    }
+
+    .composerFooter{
+      padding: 10px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(240,245,255,.62);
+      font-size: 12.3px;
+    }
+    .composerFooter .left{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width:0;
+    }
+    .miniNote{
+      display:flex; align-items:center; gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: rgba(240,245,255,.60);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .kbd{
+      font-family: var(--font-mono);
+      font-size: 16px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(240,245,255,.72);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
       white-space:nowrap;
     }
 
-    .toast{
+    .toastWrap{
       position: fixed;
+      bottom: 16px;
       left: 50%;
-      bottom: 22px;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.55);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 999px;
-      padding: 10px 14px;
-      color: rgba(255,255,255,0.82);
-      font-family: var(--mono);
-      font-size: 12px;
-      box-shadow: 0 18px 70px rgba(0,0,0,0.55);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      opacity: 0;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      z-index: 9999;
       pointer-events:none;
-      transition: opacity .2s ease, transform .2s ease;
-      z-index: 5;
-      max-width: min(820px, calc(100% - 24px));
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
+      width: min(760px, calc(100% - 24px));
     }
-    .toast.show{
-      opacity: 1;
-      transform: translateX(-50%) translateY(-6px);
+    .toast{
+      pointer-events:none;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(8,8,14,.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 22px 70px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06) inset;
+      padding: 12px 14px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      animation: toastIn .26s ease both;
     }
+    @keyframes toastIn{
+      from{ opacity:0; transform: translateY(10px) scale(.99); filter: blur(3px); }
+      to{ opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+    .toast .tTitle{
+      font-size: 13px;
+      font-weight: 700;
+      margin:0 0 2px 0;
+      color: rgba(240,245,255,.88);
+    }
+    .toast .tBody{
+      margin:0;
+      font-size: 12.6px;
+      color: rgba(240,245,255,.70);
+      line-height:1.35;
+    }
+    .toast .tag{
+      font-family: var(--font-mono);
+      font-size: 16px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      color: rgba(240,245,255,.72);
+      white-space:nowrap;
+    }
+    .tag.good{ border-color: rgba(81,255,176,.22); }
+    .tag.bad{ border-color: rgba(255,77,125,.22); }
 
     /* Responsive */
-    @media (max-width: 1060px){
+    @media (max-width: 980px){
       body{ overflow:auto; }
+      .bg{ position:fixed; }
       .app{
-        grid-template-columns: 1fr;
-        padding: var(--s4);
-        gap: var(--s4);
-        height: auto;
-        min-height: 100%;
+        flex-direction:column;
+        overflow:visible;
       }
-      .sidebar{ order: 2; }
-      .main{ order: 1; min-height: 72vh; }
-      .bubble{ max-width: 92%; }
-      .headline h1{ white-space: normal; }
+      .sidebar{
+        width:100%;
+        max-width:none;
+      }
+      .main{
+        height: calc(100vh - 24px);
+        min-height: 560px;
+      }
+      .welcome .bullets{
+        grid-template-columns: 1fr;
+      }
     }
-    @media (max-width: 560px){
-      .app{ padding: 16px; }
-      .sidebarHeader, .mainHeader{ padding: 18px 18px 12px; }
-      .sidebarBody{ padding: 16px 18px 18px; }
-      .content{ padding: 16px 18px; }
-      .composer{ padding: 12px 18px 18px; }
-      .pill{ max-width: none; }
-      .kbd{ display:none; }
-      .sendBtn{ height: 52px; min-width: 52px; border-radius: 18px; }
-      .welcome{ padding: 18px; }
+
+    @media (max-width: 520px){
+      .topbar{ padding: var(--s-4); }
+      .chatShell{ padding: 0 var(--s-4) var(--s-4); }
+      .sidebar{ padding: var(--s-4); }
+      .bubble{ padding: 11px 11px; }
+      .sendBtn{ min-width: 90px; }
+      .brand{ flex-direction:row; align-items:flex-start; }
     }
   </style>
 </head>
@@ -1096,642 +939,606 @@
   <div class="bg" aria-hidden="true">
     <div class="mesh"></div>
     <div class="grid"></div>
-    <canvas id="particles"></canvas>
+    <div class="vignette"></div>
   </div>
 
   <div class="app">
-    <aside class="panel sidebar" aria-label="TEE status and explanation">
-      <div class="sidebarHeader">
-        <div class="brandRow">
-          <div class="brand">
-            <div class="logo" aria-hidden="true"></div>
-            <div class="brandText">
-              <div class="title">TEE Private Chat</div>
-              <div class="sub">Enterprise-grade privacy · trivial build</div>
-            </div>
-          </div>
-          <div class="pill" title="Live TEE link status">
-            <div class="dot"></div>
-            <span>TEE LINK: LIVE</span>
+    <aside class="sidebar card" aria-label="TEE status and how it works">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2l8 4.5v6.8c0 5.4-4.2 8.6-8 9.7-3.8-1.1-8-4.3-8-9.7V6.5L12 2z" stroke="rgba(240,245,255,.86)" stroke-width="1.6"/>
+            <path d="M8.5 12.1l2.2 2.3 4.8-5.1" stroke="rgba(81,255,176,.92)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="title">
+          <div class="h1">TEE Private Chat</div>
+          <div class="sub">Enterprise-grade cryptographic privacy — trivially simple to build.</div>
+          <div class="pillRow" aria-label="Live runtime signals">
+            <div class="pill"><span class="dot"></span>TEE LIVE</div>
+            <div class="pill"><span class="dot"></span>NEAR AI Cloud</div>
+            <div class="pill"><span class="dot"></span>Operator Blind</div>
           </div>
         </div>
       </div>
 
-      <div class="sidebarBody">
-        <div class="sectionTitle">
-          <h3>TEE Status</h3>
+      <section class="teePanel" aria-label="Live TEE status indicators">
+        <div class="teeHeader">
+          <h2>TEE Status</h2>
+          <div class="liveBadge" title="Signals update live (simulated monitoring)">
+            <span class="wave"></span>
+            LIVE
+          </div>
         </div>
-        <div class="dividerGlow"></div>
 
-        <div class="teeCard" role="group" aria-label="Trusted Execution Environment indicators">
-          <div class="teeCardHeader">
-            <div class="left">
-              <div class="name">Cryptographic Privacy Signals</div>
-              <div class="desc">Visible proof points · calm, constant assurance</div>
+        <div class="teeList">
+          <div class="teeItem ok">
+            <div class="teeLeft">
+              <div class="teeName">Encryption</div>
+              <div class="teeDesc">AES-256-GCM</div>
             </div>
-            <div class="chip" title="NEAR AI Cloud · TEE protected">
-              <span class="chipIcon" aria-hidden="true"></span>
-              <span>NEAR AI Cloud</span>
+            <div class="teeRight">
+              <div class="statusText">✓</div>
+              <div class="statusIcon" aria-hidden="true">
+                <span style="position:relative; z-index:1; font-family: var(--font-mono); font-size: 18px; color: rgba(81,255,176,.92);">E</span>
+              </div>
             </div>
           </div>
-          <div class="teeList">
-            <div class="teeItem">
-              <div class="k">
-                <div class="sig">E</div>
-                <div class="label">
-                  <div class="a">Encryption: AES-256-GCM</div>
-                  <div class="b">your prompt sealed in transit + at runtime</div>
-                </div>
-              </div>
-              <div class="state">
-                <div class="tick good">✓</div>
+
+          <div class="teeItem ok">
+            <div class="teeLeft">
+              <div class="teeName">Attestation</div>
+              <div class="teeDesc">Verified</div>
+            </div>
+            <div class="teeRight">
+              <div class="statusText">✓</div>
+              <div class="statusIcon" aria-hidden="true">
+                <span style="position:relative; z-index:1; font-family: var(--font-mono); font-size: 18px; color: rgba(81,255,176,.92);">A</span>
               </div>
             </div>
+          </div>
 
-            <div class="teeItem">
-              <div class="k">
-                <div class="sig">A</div>
-                <div class="label">
-                  <div class="a">Attestation: Verified</div>
-                  <div class="b">hardware-backed proof it’s the right enclave</div>
-                </div>
-              </div>
-              <div class="state">
-                <div class="tick good">✓</div>
+          <div class="teeItem bad" id="operatorAccessRow">
+            <div class="teeLeft">
+              <div class="teeName">Operator Access</div>
+              <div class="teeDesc">BLOCKED</div>
+            </div>
+            <div class="teeRight">
+              <div class="statusText">✗</div>
+              <div class="statusIcon" aria-hidden="true">
+                <span style="position:relative; z-index:1; font-family: var(--font-mono); font-size: 18px; color: rgba(255,77,125,.92);">X</span>
               </div>
             </div>
+          </div>
 
-            <div class="teeItem">
-              <div class="k">
-                <div class="sig">O</div>
-                <div class="label">
-                  <div class="a">Operator Access: BLOCKED</div>
-                  <div class="b">server operators can’t read prompt or output</div>
-                </div>
-              </div>
-              <div class="state">
-                <div class="tick bad">✗</div>
-              </div>
+          <div class="teeItem ok">
+            <div class="teeLeft">
+              <div class="teeName">Inference</div>
+              <div class="teeDesc">On-Chain TEE</div>
             </div>
-
-            <div class="teeItem">
-              <div class="k">
-                <div class="sig">I</div>
-                <div class="label">
-                  <div class="a">Inference: On-Chain TEE</div>
-                  <div class="b">sealed compute with verifiable execution</div>
-                </div>
-              </div>
-              <div class="state">
-                <div class="tick good">✓</div>
+            <div class="teeRight">
+              <div class="statusText">✓</div>
+              <div class="statusIcon" aria-hidden="true">
+                <span style="position:relative; z-index:1; font-family: var(--font-mono); font-size: 18px; color: rgba(81,255,176,.92);">I</span>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <div class="sectionTitle">
-          <h3>How It Works</h3>
-        </div>
-        <div class="dividerGlow"></div>
+      <section class="how" aria-label="How it works">
+        <h3>How It Works</h3>
+        <ul class="steps">
+          <li class="step">
+            <div class="stepNum">1</div>
+            <div class="stepText">You type a prompt. It’s encrypted in transit and processed inside a hardware-isolated Trusted Execution Environment (TEE).</div>
+          </li>
+          <li class="step">
+            <div class="stepNum">2</div>
+            <div class="stepText">Remote attestation proves the enclave is genuine and running approved code — before it touches your data.</div>
+          </li>
+          <li class="step">
+            <div class="stepNum">3</div>
+            <div class="stepText">Server operators can’t read prompts or responses — memory is protected and access is cryptographically blocked.</div>
+          </li>
+          <li class="step">
+            <div class="stepNum">4</div>
+            <div class="stepText">You get an answer with an auditable privacy story: enterprise-grade security, developer-simple integration.</div>
+          </li>
+        </ul>
 
-        <div class="howCard">
-          <p>
-            Meta-narrative: enterprise-grade cryptographic privacy, trivially simple to build.
-            Your prompt goes into a hardware-isolated enclave; the operator never sees it.
-          </p>
-          <div class="steps" aria-label="How TEE works steps">
-            <div class="step">
-              <div class="n">1</div>
-              <div class="t">
-                <b>You send a prompt.</b>
-                <span>It’s encrypted and routed to a trusted enclave on NEAR AI Cloud.</span>
-              </div>
-            </div>
-            <div class="step">
-              <div class="n">2</div>
-              <div class="t">
-                <b>The enclave proves itself.</b>
-                <span>Remote attestation verifies the exact secure environment before compute runs.</span>
-              </div>
-            </div>
-            <div class="step">
-              <div class="n">3</div>
-              <div class="t">
-                <b>Inference runs privately.</b>
-                <span>The model processes your text inside the enclave; the operator is blocked by design.</span>
-              </div>
-            </div>
-            <div class="step">
-              <div class="n">4</div>
-              <div class="t">
-                <b>You receive the answer.</b>
-                <span>The response returns to you, still protected by the same cryptographic guarantees.</span>
-              </div>
-            </div>
+        <div class="code" aria-label="NEAR AI Cloud integration snippet">
+          <div class="codeHeader">
+            <div class="label">3-line NEAR AI Cloud integration</div>
+            <button class="btn secondary" id="copyCodeBtn" type="button">Copy</button>
           </div>
+          <pre id="codeBlock"><span class="kw">const</span> <span class="id">ai</span> <span class="kw">=</span> <span class="kw">new</span> <span class="fn">OpenAI</span>({ <span class="id">baseURL</span>: <span class="st">'https://cloud-api.near.ai/v1'</span>, <span class="id">apiKey</span>: <span class="id">YOUR_KEY</span> })
+<span class="cm">// TEE protection is automatic. No special SDK needed.</span></pre>
         </div>
-
-        <div class="sectionTitle">
-          <h3>3-Line Integration</h3>
-          <button class="btn" id="copyCodeBtn" type="button" title="Copy snippet">
-            <span style="font-family:var(--mono)">⧉</span>
-            Copy
-          </button>
-        </div>
-        <div class="dividerGlow"></div>
-
-        <div class="codeCard">
-          <div class="codeTop">
-            <div class="label">Near AI Cloud (TEE protection is automatic)</div>
-            <button class="btn btnPrimary" id="copyFetchBtn" type="button" title="Copy fetch example">
-              <span style="font-family:var(--mono)">⧉</span>
-              Copy fetch
-            </button>
-          </div>
-          <pre id="codeSnippet">// 3-line NEAR AI Cloud integration:
-const ai = new OpenAI({ baseURL: 'https://cloud-api.near.ai/v1', apiKey: YOUR_KEY })
-// TEE protection is automatic. No special SDK needed.</pre>
-        </div>
-
-      </div>
+      </section>
     </aside>
 
-    <main class="panel main" aria-label="Private chat">
-      <div class="mainHeader">
-        <div class="headline">
-          <h1>Cryptographically Private AI Chat</h1>
-          <div class="tagline">Powered by NEAR AI Cloud TEEs. Your prompts are sealed—never visible to any server operator.</div>
+    <main class="main card" aria-label="Private chat">
+      <header class="topbar">
+        <div class="meta">
+          <h1 class="big" style="margin:0;">Cryptographically Private AI Chat</h1>
+          <p class="small">Your prompts are processed in a TEE. The operator can’t see them — not even with root access. Ask sensitive questions with confidence.</p>
         </div>
-        <div class="headerActions">
-          <button class="btn" id="exportBtn" type="button" title="Export chat to a JSON file">
-            <span style="font-family:var(--mono)">⇣</span>
-            Export
-          </button>
-          <button class="btn btnDanger" id="clearBtn" type="button" title="Clear local chat history">
-            <span style="font-family:var(--mono)">⌫</span>
-            Clear
-          </button>
+        <div class="actions">
+          <button class="btn" id="newChatBtn" type="button" title="Clear this chat">New Chat</button>
+          <button class="btn secondary" id="exportBtn" type="button" title="Download chat transcript">Export</button>
         </div>
-      </div>
+      </header>
 
-      <div class="content">
-        <section class="welcome" id="welcome">
-          <div class="welcomeInner">
-            <div>
-              <h2>Say something sensitive. That’s the point.</h2>
-              <p>
-                This chat is designed for privacy-by-default: the runtime is a Trusted Execution Environment (TEE).
-                You get the UX of a simple chat, with the assurance of enterprise cryptography under the hood.
-              </p>
-              <div class="hintRow" aria-label="Quick prompt ideas">
-                <div class="hint" data-hint="Draft a confidential email to my CFO about a pending acquisition. Keep it concise and professional.">Confidential CFO email</div>
-                <div class="hint" data-hint="Explain what a TEE is in one paragraph for non-technical executives, focusing on operator-blindness.">TEE for executives</div>
-                <div class="hint" data-hint="Rewrite this with stronger privacy language: “We do not store prompts.”">Privacy copywriting</div>
-                <div class="hint" data-hint="I’m preparing a security review. Provide a checklist for assessing TEE-based AI inference vendors.">Security checklist</div>
+      <section class="chatShell">
+        <div class="chat" role="region" aria-label="Chat transcript">
+          <div class="chatHeader">
+            <div class="left">
+              <div class="chip" title="TEE-secured session">
+                <span class="miniDot"></span>
+                Session: TEE-secured
+              </div>
+              <div class="chip" title="Model">
+                <span style="opacity:.85;">Model</span>
+                <strong style="color:rgba(240,245,255,.84); font-weight:600;">DeepSeek-V3.1</strong>
               </div>
             </div>
-          </div>
-        </section>
-
-        <div class="chat" id="chat" aria-live="polite" aria-label="Chat messages"></div>
-
-        <div class="typingRow" id="typingRow" style="display:none" aria-hidden="true">
-          <div class="avatar ai"><span>AI</span></div>
-          <div class="typingBubble">
-            <div class="dots" aria-hidden="true">
-              <div class="dotty"></div>
-              <div class="dotty"></div>
-              <div class="dotty"></div>
+            <div class="right">
+              <span id="netStatus">Network: ready</span>
             </div>
-            <div class="typingLabel">TEE-secured inference in progress…</div>
           </div>
-        </div>
-      </div>
 
-      <div class="composer" role="group" aria-label="Message composer">
-        <div class="inputWrap">
-          <textarea id="prompt" rows="1" placeholder="Type a private prompt… (Shift+Enter for new line)"></textarea>
-          <div class="kbd" title="Keyboard shortcuts">
-            <span class="key">Enter</span><span>send</span>
-            <span style="opacity:.6">·</span>
-            <span class="key">Shift</span><span>+ Enter</span><span>newline</span>
+          <div class="scroll" id="scroll">
+            <div class="welcome" id="welcome">
+              <h4>Welcome to Operator-Blind Chat</h4>
+              <p>
+                This chat demonstrates a simple truth: <strong>privacy can be enterprise-grade without being complicated</strong>.
+                Messages are sent to NEAR AI Cloud and handled in a Trusted Execution Environment (TEE).
+              </p>
+              <div class="bullets">
+                <div class="b"><strong>What you type</strong> stays cryptographically protected while processed.</div>
+                <div class="b"><strong>Operator access</strong> is blocked — your prompts aren’t readable by server admins.</div>
+                <div class="b"><strong>Attestation</strong> proves the enclave is genuine before inference.</div>
+                <div class="b"><strong>Integration</strong> is just a normal API call — no special SDK.</div>
+              </div>
+            </div>
+
+            <div class="messages" id="messages" aria-live="polite" aria-relevant="additions"></div>
           </div>
         </div>
-        <button class="sendBtn" id="sendBtn" type="button" title="Send message">
-          <span style="font-family:var(--mono); font-weight:800;">↗</span>
-        </button>
-      </div>
+
+        <div class="composerWrap" aria-label="Message composer">
+          <form class="composer" id="composer">
+            <textarea id="input" placeholder="Ask something sensitive… (Shift+Enter for newline)" autocomplete="off" spellcheck="false"></textarea>
+            <button class="sendBtn" id="sendBtn" type="submit">Send</button>
+          </form>
+          <div class="composerFooter">
+            <div class="left">
+              <div class="miniNote"><span class="lock"></span> TEE-secured · NEAR AI Cloud</div>
+              <span class="kbd" title="Keyboard shortcut">Enter</span>
+              <span style="color:rgba(240,245,255,.52)">send</span>
+              <span class="kbd" title="Keyboard shortcut">Shift</span>+<span class="kbd" title="Keyboard shortcut">Enter</span>
+              <span style="color:rgba(240,245,255,.52)">newline</span>
+            </div>
+            <div class="right" style="display:flex; align-items:center; gap:10px;">
+              <span class="kbd" id="tokenHint" title="Token budget (approx)">max_tokens: 1024</span>
+              <button class="btn secondary" id="privacyBtn" type="button" title="Explain privacy promise">Privacy promise</button>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="toastWrap" id="toasts" aria-live="polite" aria-relevant="additions"></div>
 
   <script>
-    // ---------- Utility ----------
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    (function(){
+      const ENDPOINT = "https://cloud-api.near.ai/v1/chat/completions";
+      const MODEL = "deepseek-ai/DeepSeek-V3.1";
+      const AUTH = "Bearer sk-158842bdda7b4d13857e201777c11dc7";
 
-    const chatEl = $("#chat");
-    const promptEl = $("#prompt");
-    const sendBtn = $("#sendBtn");
-    const welcomeEl = $("#welcome");
-    const typingRow = $("#typingRow");
-    const toastEl = $("#toast");
-
-    const STORAGE_KEY = "tee_private_chat_v1";
-    const SYS_PROMPT = [
-      "You are a privacy-focused assistant for an enterprise TEE chat demo.",
-      "Be concise, clear, and helpful.",
-      "If the user asks about how privacy works, explain TEEs in plain English and mention that prompts are not visible to server operators.",
-      "Avoid claiming anything not stated: you are running via NEAR AI Cloud using a Trusted Execution Environment (TEE)."
-    ].join("\n");
-
-    function nowTime(){
-      const d = new Date();
-      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function toast(msg){
-      toastEl.textContent = msg;
-      toastEl.classList.add("show");
-      clearTimeout(toast._t);
-      toast._t = setTimeout(()=> toastEl.classList.remove("show"), 1600);
-    }
-
-    function escapeHTML(str){
-      return str.replace(/[&<>"']/g, (m)=>({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[m]));
-    }
-
-    function scrollToBottom(smooth=true){
-      const behavior = smooth ? "smooth" : "auto";
-      chatEl.scrollTo({ top: chatEl.scrollHeight + 2000, behavior });
-    }
-
-    function setWaiting(isWaiting){
-      sendBtn.disabled = isWaiting;
-      promptEl.disabled = isWaiting;
-      typingRow.style.display = isWaiting ? "flex" : "none";
-      typingRow.setAttribute("aria-hidden", isWaiting ? "false" : "true");
-      if(isWaiting) scrollToBottom(true);
-    }
-
-    function autosize(){
-      promptEl.style.height = "auto";
-      const max = 160;
-      const h = Math.min(max, promptEl.scrollHeight);
-      promptEl.style.height = h + "px";
-    }
-
-    // ---------- Rendering ----------
-    function addMessageToDOM(msg){
-      const row = document.createElement("div");
-      row.className = `msgRow ${msg.role === "user" ? "user" : "ai"}`;
-
-      const avatar = document.createElement("div");
-      avatar.className = `avatar ${msg.role === "user" ? "user" : "ai"}`;
-      const avText = document.createElement("span");
-      avText.textContent = msg.role === "user" ? "YOU" : "AI";
-      avatar.appendChild(avText);
-
-      const bubble = document.createElement("div");
-      bubble.className = `bubble ${msg.role === "user" ? "user" : "ai"}`;
-
-      const text = document.createElement("div");
-      text.className = "text";
-      text.textContent = msg.content;
-
-      const meta = document.createElement("div");
-      meta.className = "meta";
-
-      const time = document.createElement("div");
-      time.className = "time";
-      time.textContent = msg.time || nowTime();
-
-      if(msg.role === "assistant"){
-        const badge = document.createElement("div");
-        badge.className = "badge";
-        badge.innerHTML = `<span class="lock">🔒</span><span>TEE-secured · NEAR AI Cloud</span>`;
-        meta.appendChild(badge);
-        meta.appendChild(time);
-      } else {
-        meta.appendChild(document.createElement("div"));
-        meta.appendChild(time);
-      }
-
-      bubble.appendChild(text);
-      bubble.appendChild(meta);
-
-      if(msg.role === "assistant"){
-        row.appendChild(avatar);
-        row.appendChild(bubble);
-      } else {
-        row.appendChild(bubble);
-        row.appendChild(avatar);
-      }
-
-      chatEl.appendChild(row);
-      scrollToBottom(true);
-    }
-
-    function setWelcomeHiddenIfNeeded(messages){
-      if(messages.length > 0){
-        welcomeEl.classList.add("hidden");
-      } else {
-        welcomeEl.classList.remove("hidden");
-      }
-    }
-
-    // ---------- Persistence ----------
-    function loadState(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return { messages: [] };
-        const parsed = JSON.parse(raw);
-        if(!parsed || !Array.isArray(parsed.messages)) return { messages: [] };
-        return parsed;
-      }catch{
-        return { messages: [] };
-      }
-    }
-
-    function saveState(state){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    const state = loadState();
-
-    function rerender(){
-      chatEl.innerHTML = "";
-      for(const m of state.messages) addMessageToDOM(m);
-      setWelcomeHiddenIfNeeded(state.messages);
-      scrollToBottom(false);
-    }
-
-    // ---------- NEAR AI Cloud Inference ----------
-    async function callNearAI(messages){
-      const payload = {
-        model: "deepseek-ai/DeepSeek-V3.1",
-        messages,
-        max_tokens: 1024
+      const els = {
+        scroll: document.getElementById('scroll'),
+        messages: document.getElementById('messages'),
+        welcome: document.getElementById('welcome'),
+        composer: document.getElementById('composer'),
+        input: document.getElementById('input'),
+        sendBtn: document.getElementById('sendBtn'),
+        netStatus: document.getElementById('netStatus'),
+        newChatBtn: document.getElementById('newChatBtn'),
+        exportBtn: document.getElementById('exportBtn'),
+        privacyBtn: document.getElementById('privacyBtn'),
+        copyCodeBtn: document.getElementById('copyCodeBtn'),
+        codeBlock: document.getElementById('codeBlock'),
+        toasts: document.getElementById('toasts'),
+        operatorAccessRow: document.getElementById('operatorAccessRow')
       };
 
-      const res = await fetch("https://cloud-api.near.ai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer sk-158842bdda7b4d13857e201777c11dc7"
-        },
-        body: JSON.stringify(payload)
-      });
+      const state = {
+        messages: [],
+        pending: false,
+        typingEl: null,
+        lastNetworkOk: true
+      };
 
-      if(!res.ok){
-        const txt = await res.text().catch(()=> "");
-        throw new Error(`NEAR AI Cloud error ${res.status}: ${txt || res.statusText}`);
+      const storageKey = "tee_private_chat_v1";
+
+      function nowTime(){
+        const d = new Date();
+        return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
       }
 
-      const data = await res.json();
-      const content = data?.choices?.[0]?.message?.content;
-      if(!content) throw new Error("Empty response from NEAR AI Cloud.");
-      return content;
-    }
-
-    function buildModelMessages(){
-      // Keep conversation compact but useful.
-      const MAX = 18;
-      const recent = state.messages.slice(-MAX).map(m => ({
-        role: m.role === "assistant" ? "assistant" : "user",
-        content: m.content
-      }));
-
-      // System message must come first
-      return [{ role: "system", content: SYS_PROMPT }, ...recent];
-    }
-
-    async function send(){
-      const text = promptEl.value.trim();
-      if(!text) return;
-
-      // Add user message
-      const userMsg = { role: "user", content: text, time: nowTime() };
-      state.messages.push(userMsg);
-      saveState(state);
-      addMessageToDOM(userMsg);
-      setWelcomeHiddenIfNeeded(state.messages);
-
-      promptEl.value = "";
-      autosize();
-
-      setWaiting(true);
-
-      try{
-        const modelMessages = buildModelMessages();
-        const answer = await callNearAI(modelMessages);
-
-        const aiMsg = { role: "assistant", content: answer.trim(), time: nowTime() };
-        state.messages.push(aiMsg);
-        saveState(state);
-        addMessageToDOM(aiMsg);
-      }catch(err){
-        const aiMsg = {
-          role: "assistant",
-          content: `I couldn’t reach the TEE inference endpoint.\n\nDetails: ${String(err.message || err)}\n\nTip: In production, the app injects your NEAR AI key at deploy time.`,
-          time: nowTime()
-        };
-        state.messages.push(aiMsg);
-        saveState(state);
-        addMessageToDOM(aiMsg);
-      }finally{
-        setWaiting(false);
-        promptEl.focus();
+      function escapeHtml(str){
+        return str
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
       }
-    }
 
-    // ---------- Actions ----------
-    $("#clearBtn").addEventListener("click", ()=>{
-      if(!confirm("Clear local chat history on this device?")) return;
-      state.messages = [];
-      saveState(state);
-      rerender();
-      toast("Cleared local history.");
-      promptEl.focus();
-    });
-
-    $("#exportBtn").addEventListener("click", ()=>{
-      const blob = new Blob([JSON.stringify({
-        exported_at: new Date().toISOString(),
-        messages: state.messages
-      }, null, 2)], { type: "application/json" });
-
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "tee-private-chat-export.json";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(()=> URL.revokeObjectURL(a.href), 1500);
-      toast("Exported chat JSON.");
-    });
-
-    $("#copyCodeBtn").addEventListener("click", async ()=>{
-      const text = $("#codeSnippet").textContent;
-      try{
-        await navigator.clipboard.writeText(text);
-        toast("Copied snippet.");
-      }catch{
-        toast("Copy failed (clipboard blocked).");
+      function toast(title, body, kind){
+        const t = document.createElement('div');
+        t.className = 'toast';
+        const tagText = kind === 'bad' ? 'ALERT' : (kind === 'good' ? 'OK' : 'INFO');
+        const tagClass = kind === 'bad' ? 'tag bad' : (kind === 'good' ? 'tag good' : 'tag');
+        t.innerHTML = `
+          <div style="min-width:0;">
+            <p class="tTitle">${escapeHtml(title)}</p>
+            <p class="tBody">${escapeHtml(body)}</p>
+          </div>
+          <div class="${tagClass}">${escapeHtml(tagText)}</div>
+        `;
+        els.toasts.appendChild(t);
+        setTimeout(()=> {
+          t.style.transition = "opacity .25s ease, transform .25s ease, filter .25s ease";
+          t.style.opacity = "0";
+          t.style.transform = "translateY(8px) scale(.99)";
+          t.style.filter = "blur(2px)";
+          setTimeout(()=> t.remove(), 280);
+        }, 3200);
       }
-    });
 
-    $("#copyFetchBtn").addEventListener("click", async ()=>{
-      const snippet =
-`fetch('https://cloud-api.near.ai/v1/chat/completions', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_KEY' },
-  body: JSON.stringify({ model: 'deepseek-ai/DeepSeek-V3.1', messages, max_tokens: 1024 })
-}).then(r=>r.json()).then(d=>d.choices[0].message.content)`;
-      try{
-        await navigator.clipboard.writeText(snippet);
-        toast("Copied fetch example.");
-      }catch{
-        toast("Copy failed (clipboard blocked).");
+      function setNetStatus(text, ok){
+        els.netStatus.textContent = text;
+        if(ok === false){
+          els.netStatus.style.color = "rgba(255,77,125,.82)";
+        } else if(ok === true){
+          els.netStatus.style.color = "rgba(81,255,176,.82)";
+        } else {
+          els.netStatus.style.color = "rgba(240,245,255,.60)";
+        }
       }
-    });
 
-    $$(".hint").forEach(h=>{
-      h.addEventListener("click", ()=>{
-        const v = h.getAttribute("data-hint") || "";
-        promptEl.value = v;
+      function scrollToBottom(){
+        requestAnimationFrame(()=>{
+          els.scroll.scrollTop = els.scroll.scrollHeight;
+        });
+      }
+
+      function hideWelcome(){
+        if(!els.welcome.classList.contains('hidden')){
+          els.welcome.classList.add('hidden');
+        }
+      }
+
+      function addTyping(){
+        removeTyping();
+        const wrap = document.createElement('div');
+        wrap.className = 'msg assistant';
+        wrap.innerHTML = `
+          <div class="avatar" aria-hidden="true"><span>∿</span></div>
+          <div class="typing" role="status" aria-label="Assistant is typing">
+            <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="label">TEE enclave is thinking…</div>
+          </div>
+        `;
+        els.messages.appendChild(wrap);
+        state.typingEl = wrap;
+        scrollToBottom();
+      }
+
+      function removeTyping(){
+        if(state.typingEl){
+          state.typingEl.remove();
+          state.typingEl = null;
+        }
+      }
+
+      function addMessage(role, content, opts={}){
+        const msg = { role, content, t: new Date().toISOString(), id: crypto.randomUUID() };
+        if(opts.persist !== false){
+          state.messages.push(msg);
+          save();
+        }
+
+        const el = document.createElement('div');
+        el.className = 'msg ' + (role === 'user' ? 'user' : 'assistant');
+        const av = role === 'user' ? 'You' : '∿';
+        const safe = escapeHtml(content);
+
+        let badgeHtml = '';
+        if(role !== 'user'){
+          badgeHtml = `
+            <div class="metaRow">
+              <div class="badge" title="Processed inside a Trusted Execution Environment via NEAR AI Cloud">
+                <span class="lock"></span>
+                🔒 TEE-secured · NEAR AI Cloud
+              </div>
+              <div class="time">${escapeHtml(nowTime())}</div>
+            </div>
+          `;
+        } else {
+          badgeHtml = `
+            <div class="metaRow">
+              <div class="badge" title="Encrypted prompt to TEE">
+                <span class="lock"></span>
+                Encrypted to TEE
+              </div>
+              <div class="time">${escapeHtml(nowTime())}</div>
+            </div>
+          `;
+        }
+
+        el.innerHTML = `
+          <div class="avatar" aria-hidden="true"><span>${escapeHtml(av)}</span></div>
+          <div class="bubble">
+            <div class="text">${safe}</div>
+            ${badgeHtml}
+          </div>
+        `;
+
+        els.messages.appendChild(el);
+        scrollToBottom();
+      }
+
+      function systemPrompt(){
+        return `You are a privacy-first assistant running inside a Trusted Execution Environment (TEE) via NEAR AI Cloud.
+Core narrative requirements:
+- Emphasize that prompts/responses are processed in a TEE; server operators cannot view plaintext.
+- Keep explanations plain-English and enterprise-friendly.
+- If the user asks about "attestation", explain it simply (proof the enclave is genuine).
+Style:
+- Clear, concise, helpful. Provide steps/checklists where useful.
+- Avoid claiming absolute guarantees; say "designed so that" / "cryptographically enforced" and note that network/client environment still matters.`;
+      }
+
+      function buildPayload(){
+        const msgs = [
+          { role: "system", content: systemPrompt() },
+          ...state.messages.map(m => ({ role: m.role, content: m.content }))
+        ];
+        return { model: MODEL, messages: msgs, max_tokens: 1024 };
+      }
+
+      async function callNearAI(){
+        const payload = buildPayload();
+        const resp = await fetch(ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": AUTH
+          },
+          body: JSON.stringify(payload)
+        });
+
+        let data;
+        try{
+          data = await resp.json();
+        } catch(e){
+          throw new Error("Non-JSON response from NEAR AI Cloud.");
+        }
+
+        if(!resp.ok){
+          const msg = (data && data.error && (data.error.message || data.error)) ? (data.error.message || data.error) : ("HTTP " + resp.status);
+          throw new Error(msg);
+        }
+
+        const out = data?.choices?.[0]?.message?.content;
+        if(typeof out !== "string" || !out.trim()){
+          throw new Error("Empty response from model.");
+        }
+        return out.trim();
+      }
+
+      function save(){
+        try{
+          localStorage.setItem(storageKey, JSON.stringify({ messages: state.messages }));
+        }catch(e){}
+      }
+
+      function load(){
+        try{
+          const raw = localStorage.getItem(storageKey);
+          if(!raw) return;
+          const parsed = JSON.parse(raw);
+          if(!parsed || !Array.isArray(parsed.messages)) return;
+          state.messages = parsed.messages.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string");
+        }catch(e){}
+      }
+
+      function renderFromState(){
+        els.messages.innerHTML = "";
+        if(state.messages.length > 0) hideWelcome();
+        for(const m of state.messages){
+          addMessage(m.role, m.content, { persist:false });
+        }
+        scrollToBottom();
+      }
+
+      function setPending(p){
+        state.pending = p;
+        els.sendBtn.disabled = p;
+        els.input.disabled = p;
+        if(p){
+          setNetStatus("Network: requesting…", null);
+        } else {
+          setNetStatus("Network: ready", true);
+        }
+      }
+
+      function autosize(){
+        const ta = els.input;
+        ta.style.height = "0px";
+        const h = Math.min(160, Math.max(46, ta.scrollHeight));
+        ta.style.height = h + "px";
+      }
+
+      async function onSend(){
+        const text = (els.input.value || "").trim();
+        if(!text) return;
+
+        hideWelcome();
+        addMessage("user", text);
+        els.input.value = "";
         autosize();
-        promptEl.focus();
-        toast("Prompt inserted.");
-      });
-    });
 
-    // Composer interactions
-    promptEl.addEventListener("input", autosize);
+        setPending(true);
+        addTyping();
 
-    promptEl.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter" && !e.shiftKey){
+        // subtle operator access "blocked" shimmer to reinforce narrative
+        els.operatorAccessRow.style.transition = "transform .18s ease, filter .18s ease";
+        els.operatorAccessRow.style.filter = "drop-shadow(0 0 18px rgba(255,77,125,.12))";
+        setTimeout(()=> els.operatorAccessRow.style.filter = "", 450);
+
+        try{
+          const out = await callNearAI();
+          removeTyping();
+          addMessage("assistant", out);
+          setNetStatus("Network: secure response", true);
+          state.lastNetworkOk = true;
+        }catch(err){
+          removeTyping();
+          setNetStatus("Network: error", false);
+          state.lastNetworkOk = false;
+          const msg = (err && err.message) ? err.message : String(err);
+
+          addMessage("assistant",
+            "I couldn’t reach NEAR AI Cloud right now.\n\n" +
+            "What this means:\n" +
+            "• Your message wasn’t successfully processed.\n" +
+            "• If the request failed before inference, the enclave never saw it.\n\n" +
+            "Error details:\n" + msg
+          );
+
+          toast("Request failed", "Couldn’t fetch a response from NEAR AI Cloud. Check your key/network and try again.", "bad");
+        }finally{
+          setPending(false);
+          els.input.focus();
+        }
+      }
+
+      function newChat(){
+        if(state.pending) return;
+        state.messages = [];
+        save();
+        els.messages.innerHTML = "";
+        els.welcome.classList.remove('hidden');
+        setNetStatus("Network: ready", true);
+        toast("New chat", "Transcript cleared locally. TEE privacy remains automatic.", "good");
+        els.input.focus();
+      }
+
+      function exportChat(){
+        const lines = [];
+        lines.push("TEE Private Chat · NEAR AI Cloud");
+        lines.push("Exported: " + new Date().toISOString());
+        lines.push("Note: Assistant replies were processed in a TEE; operator access is blocked by design.\n");
+        for(const m of state.messages){
+          const who = m.role === "user" ? "You" : "Assistant (TEE-secured · NEAR AI Cloud)";
+          lines.push(`[${m.t}] ${who}:\n${m.content}\n`);
+        }
+        const blob = new Blob([lines.join("\n")], {type:"text/plain;charset=utf-8"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "tee-private-chat.txt";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(()=> {
+          URL.revokeObjectURL(a.href);
+          a.remove();
+        }, 0);
+        toast("Exported", "Downloaded a local transcript file.", "good");
+      }
+
+      function showPrivacyPromise(){
+        const text =
+`Privacy promise (plain English):
+• Your prompts are sent to NEAR AI Cloud and intended to be processed inside a Trusted Execution Environment (TEE).
+• The TEE uses hardware-backed isolation and encryption so server operators are designed to be unable to see plaintext prompts/responses.
+• Attestation can prove the enclave is genuine and running approved code before it handles data.
+• Important: your browser/device and network environment still matter — protect your endpoint, and avoid pasting secrets on compromised devices.`;
+        addMessage("assistant", text);
+        hideWelcome();
+        scrollToBottom();
+      }
+
+      async function copyCode(){
+        const raw =
+`const ai = new OpenAI({ baseURL: 'https://cloud-api.near.ai/v1', apiKey: YOUR_KEY })
+// TEE protection is automatic. No special SDK needed.`;
+        try{
+          await navigator.clipboard.writeText(raw);
+          toast("Copied", "Snippet copied to clipboard.", "good");
+        }catch(e){
+          toast("Copy failed", "Clipboard permission blocked. Select and copy manually.", "bad");
+        }
+      }
+
+      // Events
+      els.composer.addEventListener('submit', (e)=>{
         e.preventDefault();
-        if(!sendBtn.disabled) send();
-      }
-    });
+        if(state.pending) return;
+        onSend();
+      });
 
-    sendBtn.addEventListener("click", ()=> send());
+      els.input.addEventListener('input', autosize);
 
-    // ---------- Particles background ----------
-    (function particles(){
-      const canvas = document.getElementById("particles");
-      const ctx = canvas.getContext("2d", { alpha: true });
-      let w=0,h=0,dpr=1;
-
-      const colors = [
-        { r: 34, g: 211, b: 238, a: 0.45 }, // cyan
-        { r: 124, g: 58, b: 237, a: 0.42 }, // violet
-        { r: 249, g: 115, b: 22, a: 0.30 }  // orange
-      ];
-
-      const N = 86;
-      const P = [];
-      function rnd(a,b){ return a + Math.random()*(b-a); }
-
-      function resize(){
-        dpr = Math.min(2, window.devicePixelRatio || 1);
-        w = canvas.clientWidth = canvas.parentElement.clientWidth;
-        h = canvas.clientHeight = canvas.parentElement.clientHeight;
-        canvas.width = Math.floor(w * dpr);
-        canvas.height = Math.floor(h * dpr);
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-      }
-
-      function init(){
-        P.length = 0;
-        for(let i=0;i<N;i++){
-          const c = colors[Math.floor(Math.random()*colors.length)];
-          P.push({
-            x: rnd(0,w),
-            y: rnd(0,h),
-            r: rnd(1.2, 3.2),
-            vx: rnd(-0.25,0.25),
-            vy: rnd(-0.18,0.18),
-            c,
-            tw: rnd(0, Math.PI*2),
-            ts: rnd(0.004, 0.018),
-          });
+      els.input.addEventListener('keydown', (e)=>{
+        if(e.key === "Enter" && !e.shiftKey){
+          e.preventDefault();
+          if(state.pending) return;
+          onSend();
         }
+      });
+
+      els.newChatBtn.addEventListener('click', newChat);
+      els.exportBtn.addEventListener('click', exportChat);
+      els.privacyBtn.addEventListener('click', showPrivacyPromise);
+      els.copyCodeBtn.addEventListener('click', copyCode);
+
+      // Startup
+      load();
+      renderFromState();
+      autosize();
+      setNetStatus("Network: ready", true);
+
+      // Initial nudge if empty
+      if(state.messages.length === 0){
+        setTimeout(()=>{
+          toast("Tip", "Ask about handling sensitive data, compliance, or how attestation works.", "info");
+        }, 650);
       }
 
-      function draw(){
-        ctx.clearRect(0,0,w,h);
-
-        // subtle links
-        for(let i=0;i<P.length;i++){
-          for(let j=i+1;j<P.length;j++){
-            const a = P[i], b = P[j];
-            const dx = a.x - b.x;
-            const dy = a.y - b.y;
-            const dist = Math.hypot(dx,dy);
-            if(dist < 140){
-              const alpha = (1 - dist/140) * 0.10;
-              ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.moveTo(a.x, a.y);
-              ctx.lineTo(b.x, b.y);
-              ctx.stroke();
-            }
-          }
-        }
-
-        for(const p of P){
-          p.tw += p.ts;
-          const pulse = (Math.sin(p.tw)+1)/2; // 0..1
-          const rr = p.r * (0.85 + pulse*0.55);
-          const a = p.c.a * (0.55 + pulse*0.6);
-
-          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, rr*8.2);
-          grad.addColorStop(0, `rgba(${p.c.r},${p.c.g},${p.c.b},${a})`);
-          grad.addColorStop(1, `rgba(${p.c.r},${p.c.g},${p.c.b},0)`);
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, rr*8.2, 0, Math.PI*2);
-          ctx.fill();
-
-          // core
-          ctx.fillStyle = `rgba(255,255,255,${0.22 + pulse*0.25})`;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, rr*0.95, 0, Math.PI*2);
-          ctx.fill();
-
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if(p.x < -40) p.x = w + 40;
-          if(p.x > w + 40) p.x = -40;
-          if(p.y < -40) p.y = h + 40;
-          if(p.y > h + 40) p.y = -40;
-        }
-
-        requestAnimationFrame(draw);
+      // Live-ish status shimmer animation loop (subtle) to imply monitoring
+      let shimmerT = 0;
+      function shimmer(){
+        shimmerT += 1;
+        const a = (Math.sin(shimmerT/22) + 1)/2; // 0..1
+        const border = 0.10 + a*0.16;
+        els.operatorAccessRow.style.borderColor = `rgba(255,77,125,${border})`;
+        requestAnimationFrame(shimmer);
       }
+      shimmer();
 
-      const ro = new ResizeObserver(()=>{ resize(); init(); });
-      ro.observe(document.body);
-      resize(); init(); draw();
+      // If the key placeholder is still present, warn (deployment replaces it)
+      if(AUTH.includes("sk-158842bdda7b4d13857e201777c11dc7")){
+        setTimeout(()=>{
+          toast("Deploy note", "API key placeholder detected. At deploy time it will be replaced automatically.", "info");
+        }, 1200);
+      }
     })();
-
-    // ---------- Boot ----------
-    rerender();
-    autosize();
-    promptEl.focus();
-
-    // If there's no history, seed one subtle assistant message on first load? Keep it truly empty.
-    // But add a tiny toast hint for first-time users.
-    if(state.messages.length === 0){
-      setTimeout(()=> toast("Your prompt is protected inside a TEE. Operators can’t read it."), 650);
-    }
   </script>
 </body>
 </html>
